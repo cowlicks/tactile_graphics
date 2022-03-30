@@ -19,7 +19,7 @@ pub struct StlViewerProps {
 #[function_component(StlViewer)]
 pub fn stl_viewer(props: &StlViewerProps) -> Html {
     info!("StlViewer-component: start");
-    let image = img_from_bytes(&props.bytes).expect("How do I handle results with html");
+    let image = img_from_bytes(&props.bytes).unwrap();
     info!("StlViewer-component: created image");
     let triangles = image_to_stl(
         image,
@@ -31,9 +31,9 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
 
     let b: Vec<u8> = vec![];
     let mut writer = BufWriter::new(b);
-    triangles_to_stl_writer(&mut writer, triangles).expect("aosentuhsatheu");
+    triangles_to_stl_writer(&mut writer, triangles).unwrap();
 
-    let inner = writer.into_inner().expect("snthsnh");
+    let inner = writer.into_inner().unwrap();
 
     let g_file = gloo_file::File::new("test.stl", inner.as_slice());
     use_effect(move || {
