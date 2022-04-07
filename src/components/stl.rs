@@ -27,7 +27,8 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
         DEFAULT_STL_HEIGHT,
         DEFAULT_SCALE_FACTOR,
     )
-    .unwrap();
+    .unwrap()
+    .collect();
 
     let b: Vec<u8> = vec![];
     let mut writer = BufWriter::new(b);

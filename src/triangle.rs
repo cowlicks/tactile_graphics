@@ -25,8 +25,8 @@ fn to_3d(tris: &Vec<f64>, z: f64) -> Vec<f64> {
         .collect()
 }
 
-fn scale(v: Vec<f64>, factor: f64) -> Vec<f64> {
-    v.iter().map(|x| x * factor).collect()
+fn scale(v: Vec<f64>, factor: f64) -> impl Iterator<Item = f64> {
+    v.into_iter().map(move |x| x * factor)
 }
 
 /// copy triangles, but flipped over and moved to z
@@ -78,7 +78,7 @@ pub fn image_to_stl(
     threshold: u8,
     height: f64,
     scale_factor: f64,
-) -> Result<Vec<f64>, Box<dyn Error>> {
+) -> Result<impl Iterator<Item = f64>, Box<dyn Error>> {
     //let mut img = img.to_luma8();
 
     //threshold_grey_image(&mut img, threshold);
@@ -180,7 +180,7 @@ pub fn image_file_to_stl(
         .decode()?;
 
     let tris = image_to_stl(img, DEFAULT_THRESHOLD, height, scale_factor)?;
-    write_stl_3d(output_filename, tris)?;
+    write_stl_3d(output_filename, tris.collect::<Vec<f64>>())?;
     Ok(())
 }
 
@@ -202,13 +202,14 @@ mod tests {
             .decode()?;
 
         b.iter(|| {
-            image_to_stl(
+            let _ = image_to_stl(
                 img.clone(),
                 DEFAULT_THRESHOLD,
                 SOME_HEIGHT,
                 SOME_SCALE_FACTOR,
             )
-            .unwrap();
+            .unwrap()
+            .collect::<Vec<f64>>();
         });
         Ok(())
     }
@@ -220,13 +221,14 @@ mod tests {
             .decode()?;
 
         b.iter(|| {
-            image_to_stl(
+            let _ = image_to_stl(
                 img.clone(),
                 DEFAULT_THRESHOLD,
                 SOME_HEIGHT,
                 SOME_SCALE_FACTOR,
             )
-            .unwrap();
+            .unwrap()
+            .collect::<Vec<f64>>();
         });
         Ok(())
     }
