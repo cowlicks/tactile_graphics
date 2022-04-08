@@ -131,14 +131,6 @@ pub fn image_to_stl(
         .zip(earcut_args_arr)
         .flat_map(|(indexes, ear_args)| {
             let verts = ear_args.0;
-            println!(
-                "
-                verts.len = {}
-                indexes.len = {}
-                ",
-                verts.len(),
-                indexes.len()
-            );
             indexes
                 .iter()
                 .map(|i| {
