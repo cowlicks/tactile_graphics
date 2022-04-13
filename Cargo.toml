@@ -21,6 +21,7 @@ wasm-logger = "0.2"
 log = "0.4.6"
 base64 = "0.13"
 photon-rs = "0.3.0"
+yewdux = "0.7"
 
 #preformance stuff
 [dependencies.chrono]

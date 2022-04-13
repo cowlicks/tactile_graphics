@@ -1,96 +1,57 @@
-use photon_rs::transform::resize;
-use photon_rs::PhotonImage;
 use std::rc::Rc;
-use web_sys::{CanvasRenderingContext2d, Event, HtmlCanvasElement, HtmlInputElement};
-use yew::NodeRef;
+use web_sys::{
+    Event,
+    HtmlInputElement
+};
 use yew::{html, html::TargetCast, Component, Context, Html};
 
 use gloo_file::callbacks::FileReader;
 use gloo_file::File;
 use log::info;
 
-use crate::components::constants::VIEW_WIDTH_PX;
 use crate::components::image::img_html_from_bytes;
 use crate::components::threshold::ThresholdImage;
+use super::store::GlobalState;
 
-use super::external::canvas_from_image;
-use super::image::data_url_from_img_bytes;
-
-use wasm_bindgen::JsCast;
-
-/// Faster than reading bytes to with photon_rs::native::open_image. but async
-async fn photon_image_from(data: Vec<u8>) -> PhotonImage {
-    let durl = data_url_from_img_bytes(&data).unwrap();
-    let canvas = canvas_from_image(&durl)
-        .await
-        .dyn_into::<HtmlCanvasElement>()
-        .unwrap();
-
-    let ctx = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
-    info!("unwraped the context");
-
-    photon_rs::open_image(canvas, ctx)
-}
-
-pub fn draw_data_to_canvas(
-    canvas: HtmlCanvasElement,
-    ctx: CanvasRenderingContext2d,
-    data: Vec<u8>,
-) {
-    wasm_bindgen_futures::spawn_local(async move {
-        let new_image = photon_image_from(data.to_vec()).await;
-
-        let scale = (VIEW_WIDTH_PX as f64) / (new_image.get_width() as f64);
-
-        let new_width = (scale * new_image.get_width() as f64) as u32;
-        let new_height = (scale * new_image.get_height() as f64) as u32;
-
-        let new_image = resize(
-            &new_image,
-            new_width,
-            new_height,
-            photon_rs::transform::SamplingFilter::Nearest,
-        );
-
-        canvas.set_width(new_image.get_width());
-        canvas.set_height(new_image.get_height());
-
-        photon_rs::putImageData(canvas, ctx, new_image)
-    });
-}
+use yewdux::prelude::*;
 
 pub enum Msg {
     LoadedBytes(String, Vec<u8>),
     Files(Vec<File>),
+    State(Rc<GlobalState>),
 }
+
 
 pub struct App {
     reader: Option<FileReader>,
     file_name: Option<String>,
     file_bytes: Option<Rc<Vec<u8>>>,
-    node_ref: NodeRef,
+    _dispatch: Dispatch<BasicStore<GlobalState>>,
+    state: Option<Rc<GlobalState>>,
 }
 
 impl Component for App {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_ctx: &Context<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
+             // Create a bridge to receive new state. Changes are handled in `update`.
+        let _dispatch = Dispatch::bridge_state(ctx.link().callback(Msg::State));
         Self {
             reader: None,
             file_name: None,
             file_bytes: None,
-            node_ref: NodeRef::default(),
+            _dispatch,
+            state: Default::default()
         }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            Msg::State(state) => {
+                self.state = Some(state);
+                true
+            }
             Msg::LoadedBytes(file_name, data) => {
                 info!("Loaded bytes");
                 self.file_bytes = Some(Rc::from(data));
@@ -121,6 +82,10 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let global_state_str = match &self.state {
+            Some(x) => format!("got global threshold {}", x.threshold_value),
+            None => "No global threshold value".to_string(),
+        };
         html! {
             <div>
                 <div>
@@ -142,17 +107,20 @@ impl Component for App {
                             Msg::Files(result)
                         })}
                     />
+                <div>
+                    <h1>
+                         { global_state_str } 
+                    </h1>
                 </div>
-                { self.view_file() }
-                <canvas
-                    ref={ self.node_ref.clone() } />
+                </div>
+                { self.view_file(&ctx) }
             </div>
         }
     }
 }
 
 impl App {
-    fn view_file(&self) -> Html {
+    fn view_file(&self, _ctx: &Context<Self>) -> Html {
         if let Some(data) = &self.file_bytes {
             html! {
                 <div class="image-container">

@@ -7,65 +7,21 @@ use crate::{
 };
 use image::Luma;
 use image::{imageops::resize, DynamicImage, ImageFormat};
-use image::{imageops::ColorMap, ImageBuffer};
+use image::ImageBuffer;
 use log::info;
 use std::rc::Rc;
 use yew::{html, Component, Context, Html, Properties};
+use yewdux::prelude::*;
 
 use crate::components::slider::Slider;
 
-use chrono::prelude::*;
+use super::{utils::SplitColor, store::GlobalState};
+
+use crate::components::constants::IMAGE_WIDTH_PX;
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
     pub bytes: Rc<Vec<u8>>,
-}
-
-#[derive(Clone, Copy)]
-pub struct SplitColor {
-    value: u8,
-}
-
-// copied from the definition of image::imageops::colorops::BiLevel
-// https://docs.rs/image/0.24.1/src/image/imageops/colorops.rs.html#412
-impl SplitColor {
-    pub fn new(value: u8) -> Self {
-        Self { value }
-    }
-}
-impl ColorMap for SplitColor {
-    type Color = Luma<u8>;
-
-    #[inline(always)]
-    fn index_of(&self, color: &Luma<u8>) -> usize {
-        let luma = color.0;
-        if luma[0] > self.value {
-            1
-        } else {
-            0
-        }
-    }
-
-    #[inline(always)]
-    fn lookup(&self, idx: usize) -> Option<Self::Color> {
-        match idx {
-            0 => Some([0].into()),
-            1 => Some([255].into()),
-            _ => None,
-        }
-    }
-
-    /// Indicate NeuQuant implements `lookup`.
-    fn has_lookup(&self) -> bool {
-        true
-    }
-
-    #[inline(always)]
-    fn map_color(&self, color: &mut Luma<u8>) {
-        let new_color = 0xFF * self.index_of(color) as u8;
-        let luma = &mut color.0;
-        luma[0] = new_color;
-    }
 }
 
 fn scale_proportionate(width_constraint: u32, image: DynamicImage) -> DynamicImage {
@@ -86,17 +42,30 @@ fn scale_proportionate(width_constraint: u32, image: DynamicImage) -> DynamicIma
 }
 
 pub enum Msg {
-    NewThresholdValu(u8),
     ToggleDisplayStl,
+    State(Rc<GlobalState>),
 }
 
 pub struct ThresholdImage {
     resized_greyed_image: ImageBuffer<Luma<u8>, Vec<u8>>,
-    threshold_value: u8,
     display_stl: bool,
+    dispatch: Dispatch<BasicStore<GlobalState>>,
+    state: Option<Rc<GlobalState>>,
 }
 
-use crate::components::constants::IMAGE_WIDTH_PX;
+macro_rules! _timeit {
+    ($format_str:expr, $code:expr) => {
+        {
+            let start = Utc::now();
+            let out = $code;
+            info!(
+                $format_str,
+                (Utc::now() - start).num_milliseconds()
+            );
+            out
+        }
+    };
+}
 
 impl Component for ThresholdImage {
     type Message = Msg;
@@ -111,17 +80,19 @@ impl Component for ThresholdImage {
         let resized_greyed_image = scale_proportionate(IMAGE_WIDTH_PX, full_img).into_luma8();
         info!("created resized greyed image");
 
+        let dispatch = Dispatch::bridge_state(ctx.link().callback(Msg::State));
         Self {
             resized_greyed_image,
-            threshold_value: 128,
             display_stl: false,
+            dispatch,
+            state: Default::default()
         }
     }
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         //info!("Threshold component update");
         match msg {
-            Msg::NewThresholdValu(threshold_value) => {
-                self.threshold_value = threshold_value;
+            Msg::State(state) => {
+                self.state = Some(state);
                 true
             }
             Msg::ToggleDisplayStl => {
@@ -132,51 +103,52 @@ impl Component for ThresholdImage {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        info!("Threshold component view");
-        let cmap = SplitColor::new(self.threshold_value);
-        let out_img = threshold_img_buffer(self.resized_greyed_image.clone(), cmap);
-        let onchange = ctx.link().callback(|v| Msg::NewThresholdValu(v as u8));
+        //info!("Threshold component view");
+                match &self.state {
+                    None => html! {
+                        <div> { "loading..." } </div>
+                    },
+                    Some(state) => {
+                        let cmap = SplitColor::new(state.threshold_value);
+                        let out_img = threshold_img_buffer(self.resized_greyed_image.clone(), cmap);
 
-        let onclick = ctx.link().callback(|_v| Msg::ToggleDisplayStl);
+                        let onchange = self.dispatch.reduce_callback_with(|state: &mut GlobalState, v: f64| state.threshold_value = v as u8);
 
-        let start = Utc::now();
+                        let onclick = ctx.link().callback(|_v| Msg::ToggleDisplayStl);
 
-        let img_html = img_html_from_bytes(&img_to_formatted_bytes(out_img, ImageFormat::Jpeg));
 
-        info!(
-            "threshold view took {:?}",
-            (Utc::now() - start).num_milliseconds()
-        );
+                        let img_html = img_html_from_bytes(&img_to_formatted_bytes(out_img, ImageFormat::Jpeg));
 
-        let out = html! {
-            <div>
-                {
-                    img_html
+                        html! {
+                            <div>
+                                {
+                                    img_html
+                                }
+                                <Slider label="Threshold Value"
+                                    min=1.0
+                                    max=255.0
+                                    step=5.0
+                                    onchange={onchange}
+                                    value={ state.threshold_value as f64 }
+
+                                />
+                                <p> { "Choose a good threshold value" } </p>
+                                <button
+                                    onclick={onclick}
+                                > { "Convert to STL" } </button>
+                                if self.display_stl {
+                                    <StlViewer
+                                        bytes={ Rc::clone(&ctx.props().bytes) }
+                                        threshold_value={ state.threshold_value }
+                                    />
+                                }
+                            </div>
+                        }
+                    }
                 }
-                <Slider label="Threshold Value"
-                    min=1.0
-                    max=255.0
-                    step=5.0
-                    onchange={onchange}
-                    value={ self.threshold_value as f64 }
-                />
-                <p> { "Choose a good threshold value" } </p>
-                <button
-                    onclick={onclick}
-                > { "Convert to STL" } </button>
-                if self.display_stl {
-                    <StlViewer
-                        bytes={ Rc::clone(&ctx.props().bytes) }
-                        threshold_value={ self.threshold_value as u8 }
-                    />
-                }
-            </div>
-        };
-        out
     }
 
     fn changed(&mut self, ctx: &Context<Self>) -> bool {
-        //info!(" from changed!");
         let full_img = img_from_bytes(&ctx.props().bytes)
             .expect("this came from an image so this shouldn't fail");
         let resized_greyed_image = scale_proportionate(500, full_img).into_luma8();
