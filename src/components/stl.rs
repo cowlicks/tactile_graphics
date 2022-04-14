@@ -4,10 +4,13 @@ use std::io::BufWriter;
 use std::rc::Rc;
 use yew::{function_component, html, use_effect, Properties};
 
+use yewdux::prelude::*;
+use yewdux_functional::use_store;
+
+
 use super::{
-    constants::{DEFAULT_SCALE_FACTOR, DEFAULT_STL_HEIGHT},
     external::STLViewer,
-    image::img_from_bytes,
+    image::img_from_bytes, store::GlobalState,
 };
 
 #[derive(Properties, PartialEq)]
@@ -18,14 +21,22 @@ pub struct StlViewerProps {
 
 #[function_component(StlViewer)]
 pub fn stl_viewer(props: &StlViewerProps) -> Html {
-    info!("StlViewer-component: start");
+
+    let store = use_store::<BasicStore<GlobalState>>();
+
+    let state = if let Some(s) = store.state() {
+        s
+    } else {
+        return html! { <div> { "Could not get state" } </div> };
+    };
+
     let image = img_from_bytes(&props.bytes).unwrap();
-    info!("StlViewer-component: created image");
+
     let triangles = image_to_stl(
         image,
         props.threshold_value,
-        DEFAULT_STL_HEIGHT,
-        DEFAULT_SCALE_FACTOR,
+        state.stl_height,
+        state.stl_scale_factor,
     )
     .unwrap()
     .collect();

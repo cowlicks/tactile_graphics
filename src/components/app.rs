@@ -35,7 +35,6 @@ impl Component for App {
     type Properties = ();
 
     fn create(ctx: &Context<Self>) -> Self {
-             // Create a bridge to receive new state. Changes are handled in `update`.
         let _dispatch = Dispatch::bridge_state(ctx.link().callback(Msg::State));
         Self {
             reader: None,

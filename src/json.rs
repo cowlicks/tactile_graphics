@@ -75,8 +75,8 @@ mod tests {
     use super::*;
     use crate::tree::sort_edges;
     use crate::util::write_file;
-    use crate::edge_file;
     use std::error::Error;
+    use crate::edge_file;
     use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
 
     #[test]

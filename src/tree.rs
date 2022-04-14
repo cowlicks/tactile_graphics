@@ -88,7 +88,7 @@ impl Node {
             edge_contains(&other.data, &self.data[0])
         }
     }
-    fn is_parent_of(&self, other: &Node) -> bool {
+    fn _is_parent_of(&self, other: &Node) -> bool {
         if self.data.is_hole() {
             hole_contains(&self.data, &other.data[0])
         } else {
