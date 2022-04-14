@@ -19,16 +19,20 @@ fn insert(nodes: &mut Vec<Node>, mut new_node: Node) {
         new_node.insert(data_child);
     }
 
-    // find the parent of the new data
-    let some_parent_index = nodes.iter().position(|child| child.is_parent_of(&new_node));
+    nodes.push(new_node);
+    //// previously here we would handle the case where nodes here were parents of the current node.
+    //// but if we insert nodes in the order that they were created, this is never the case
 
-    // insert the new data into its parent
-    if let Some(index) = some_parent_index {
-        nodes[index].insert(new_node);
-    } else {
-        // or insert it as a sibling
-        nodes.push(new_node);
-    }
+    //// find the parent of the new data
+    //let some_parent_index = nodes.iter().position(|child| child.is_parent_of(&new_node));
+
+    //// insert the new data into its parent
+    //if let Some(index) = some_parent_index {
+    //    nodes[index].insert(new_node);
+    //} else {
+    //    // or insert it as a sibling
+    //    nodes.push(new_node);
+    //}
 }
 
 /// flatten_nodes to be passed to earcuttr
