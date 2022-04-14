@@ -8,7 +8,7 @@ use crate::{
     stl::write_stl_3d,
     threshold_img,
     tree::sort_edges,
-    DEFAULT_THRESHOLD,
+    components::constants::DEFAULT_THRESHOLD_VALUE,
 };
 
 use image::{io::Reader as ImageReader, DynamicImage};
@@ -119,7 +119,6 @@ pub fn image_to_stl(
     let triangle_indexes: Vec<Vec<usize>> = earcut_args_arr
         .iter()
         .map(|(verts, holes, _dims)| {
-            println!("shape num holes: {}", holes.len());
             earcut(verts, holes, 2)
         })
         .collect();
@@ -171,7 +170,7 @@ pub fn image_file_to_stl(
         .with_guessed_format()?
         .decode()?;
 
-    let tris = image_to_stl(img, DEFAULT_THRESHOLD, height, scale_factor)?;
+    let tris = image_to_stl(img, DEFAULT_THRESHOLD_VALUE, height, scale_factor)?;
     write_stl_3d(output_filename, tris.collect::<Vec<f64>>())?;
     Ok(())
 }
@@ -196,7 +195,7 @@ mod tests {
         b.iter(|| {
             let _ = image_to_stl(
                 img.clone(),
-                DEFAULT_THRESHOLD,
+                DEFAULT_THRESHOLD_VALUE,
                 SOME_HEIGHT,
                 SOME_SCALE_FACTOR,
             )
@@ -215,7 +214,7 @@ mod tests {
         b.iter(|| {
             let _ = image_to_stl(
                 img.clone(),
-                DEFAULT_THRESHOLD,
+                DEFAULT_THRESHOLD_VALUE,
                 SOME_HEIGHT,
                 SOME_SCALE_FACTOR,
             )

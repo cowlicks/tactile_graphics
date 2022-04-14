@@ -1,5 +1,5 @@
 pub mod app;
-mod constants;
+pub mod constants;
 mod external;
 pub mod image;
 mod slider;

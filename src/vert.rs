@@ -195,7 +195,6 @@ pub fn get_quad_edge(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::earcut::{deviation, earcut, flatten};
     use std::error::Error;
 
     #[test]

@@ -75,15 +75,16 @@ mod tests {
     use super::*;
     use crate::tree::sort_edges;
     use crate::util::write_file;
-    use crate::{edge_file, DEFAULT_THRESHOLD};
+    use crate::edge_file;
     use std::error::Error;
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
 
     #[test]
     fn test_geojson() -> Result<(), Box<dyn Error>> {
-        let edges = edge_file(DEFAULT_THRESHOLD, "./images/stick-figure.png")?;
+        let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/stick-figure.png")?;
         let nodes = sort_edges(edges.closed_edges);
         for (i, n) in nodes.into_iter().enumerate() {
-            println!("node {:?} has {:?} children", i, n.children.len());
+            info!("node {:?} has {:?} children", i, n.children.len());
             let json_value = multipolygon_from_vec_edge_and_holes(vec![n]);
             write_file(json_value.to_string(), &format!("out_{i}.json"))?;
         }

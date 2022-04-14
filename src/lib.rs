@@ -14,7 +14,7 @@ pub mod vert;
 
 use std::error::Error;
 
-use components::threshold::SplitColor;
+use components::utils::SplitColor;
 use image::error::{LimitError, LimitErrorKind};
 use image::imageops::ColorMap;
 use image::io::Reader as ImageReader;
@@ -24,8 +24,6 @@ use image::{
 
 use vert::{get_quad_edge, QuadCase};
 use edge_collection::Edges;
-
-static DEFAULT_THRESHOLD: u8 = 128;
 
 pub fn rgb_to_greyscale(p: Rgba<u8>) -> Rgba<u8> {
     let x: u8 = (0.2126 * (p[0] as f64) + 0.7152 * (p[1] as f64) + 0.0722 * (p[2] as f64)) as u8;
@@ -153,10 +151,11 @@ pub fn threshold_png(in_filename: &str, out_filename: &str) -> Result<(), Box<dy
 #[cfg(test)]
 mod tests {
     use crate::json::save_vec_edge_as_geojson;
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
+    use super::*;
+
     extern crate test;
     use test::Bencher;
-
-    use super::*;
 
     #[bench]
     fn grey_then_color_map_in_place_threshold(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
@@ -182,13 +181,13 @@ mod tests {
 
     #[test]
     fn edge_file_stick_figure() -> Result<(), Box<dyn Error>> {
-        let edges = edge_file(DEFAULT_THRESHOLD, "./images/stick-figure.png")?;
+        let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/stick-figure.png")?;
         assert_eq!(edges.closed_edges.len(), 9);
         Ok(())
     }
     #[test]
     fn edge_file_small_wolf() -> Result<(), Box<dyn Error>> {
-        let edges = edge_file(DEFAULT_THRESHOLD, "./images/small-wolf.png")?;
+        let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/small-wolf.png")?;
         save_vec_edge_as_geojson(edges.closed_edges, "small-wolf.json")?;
         //assert_eq!(edges.closed_edges.len(), 7);
         Ok(())
@@ -199,7 +198,7 @@ mod tests {
         let mut img = ImageReader::open("./images/doggy.png")?
             .with_guessed_format()?
             .decode()?;
-        threshold_img(&mut img, DEFAULT_THRESHOLD);
+        threshold_img(&mut img, DEFAULT_THRESHOLD_VALUE);
 
         b.iter(|| {
             edge_img(&img).unwrap();
@@ -212,7 +211,7 @@ mod tests {
         let mut img = ImageReader::open("./images/eagle.png")?
             .with_guessed_format()?
             .decode()?;
-        threshold_img(&mut img, DEFAULT_THRESHOLD);
+        threshold_img(&mut img, DEFAULT_THRESHOLD_VALUE);
 
         b.iter(|| {
             edge_img(&img).unwrap();

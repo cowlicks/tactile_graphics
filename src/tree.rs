@@ -128,8 +128,9 @@ pub fn sort_edges(edges: Vec<Edge>) -> Vec<Node> {
 mod tests {
     use super::*;
     use crate::util::testing::{closed_edge, donut};
-    use crate::{edge_file, DEFAULT_THRESHOLD};
     use std::error::Error;
+    use crate::edge_file;
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
 
     static SIDE: f32 = 100.;
     static X0: f32 = 0.;
@@ -137,7 +138,7 @@ mod tests {
 
     #[test]
     fn test_tree() -> Result<(), Box<dyn Error>> {
-        let edges = edge_file(DEFAULT_THRESHOLD, "./images/stick-figure.png")?;
+        let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/stick-figure.png")?;
         let t = tree_from_edges(edges.closed_edges);
         assert_eq!(t.children.len(), 1);
         assert_eq!(t.children[0].children.len(), 4);
@@ -174,7 +175,6 @@ mod tests {
         let edges = edge_file(DEFAULT_THRESHOLD, "./images/stick-figure.png")?;
         let sorted = sort_edges(edges.closed_edges);
         //assert_eq!(sorted.len(), 5, "Should equal the total number of shapes");
-        println!("{:?}", sorted.len());
         Ok(())
     }
 
