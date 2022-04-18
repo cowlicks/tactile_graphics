@@ -70,6 +70,7 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
                 id={"stl-cont"}
                 style="width: 500px; height: 500px"
             >
+             <h1> { "loading..." }</h1>
             </div>
         </p>
     }

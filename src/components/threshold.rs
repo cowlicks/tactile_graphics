@@ -2,6 +2,8 @@ use crate::{
     components::{
         image::{img_from_bytes, img_html_from_bytes, img_to_formatted_bytes},
         stl::StlViewer,
+        number_input::NumberInput,
+        slider::Slider,
     },
     threshold_img_buffer,
 };
@@ -12,8 +14,6 @@ use log::info;
 use std::rc::Rc;
 use yew::{html, Component, Context, Html, Properties};
 use yewdux::prelude::*;
-
-use crate::components::slider::Slider;
 
 use super::{utils::SplitColor, store::GlobalState};
 
@@ -114,6 +114,7 @@ impl Component for ThresholdImage {
 
                         let onchange = self.dispatch.reduce_callback_with(|state: &mut GlobalState, v: f64| state.threshold_value = v as u8);
 
+                        let height_onchange = self.dispatch.reduce_callback_with(|state: &mut GlobalState, v: f64| state.stl_height = v);
                         let onclick = ctx.link().callback(|_v| Msg::ToggleDisplayStl);
 
 
@@ -131,6 +132,12 @@ impl Component for ThresholdImage {
                                     onchange={onchange}
                                     value={ state.threshold_value as f64 }
 
+                                />
+                                <NumberInput label="Stl height"
+                                    min=0.0
+                                    max=200.0
+                                    onchange={height_onchange}
+                                    value={ state.stl_height as f64 }
                                 />
                                 <p> { "Choose a good threshold value" } </p>
                                 <button

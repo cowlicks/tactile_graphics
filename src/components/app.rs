@@ -16,6 +16,7 @@ use super::store::GlobalState;
 use yewdux::prelude::*;
 
 pub enum Msg {
+    FileLoading,
     LoadedBytes(String, Vec<u8>),
     Files(Vec<File>),
     State(Rc<GlobalState>),
@@ -26,6 +27,7 @@ pub struct App {
     reader: Option<FileReader>,
     file_name: Option<String>,
     file_bytes: Option<Rc<Vec<u8>>>,
+    file_loading: bool,
     _dispatch: Dispatch<BasicStore<GlobalState>>,
     state: Option<Rc<GlobalState>>,
 }
@@ -40,6 +42,7 @@ impl Component for App {
             reader: None,
             file_name: None,
             file_bytes: None,
+            file_loading: false,
             _dispatch,
             state: Default::default()
         }
@@ -47,14 +50,19 @@ impl Component for App {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
+            Msg::FileLoading => {
+                self.file_loading = true;
+                true
+            }
             Msg::State(state) => {
                 self.state = Some(state);
                 true
             }
             Msg::LoadedBytes(file_name, data) => {
                 info!("Loaded bytes");
-                self.file_bytes = Some(Rc::from(data));
                 self.file_name = Some(file_name);
+                self.file_bytes = Some(Rc::from(data));
+                self.file_loading = false;
                 self.reader = None;
                 true
             }
@@ -81,10 +89,7 @@ impl Component for App {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let global_state_str = match &self.state {
-            Some(x) => format!("got global threshold {}", x.threshold_value),
-            None => "No global threshold value".to_string(),
-        };
+        let link = ctx.link().clone();
         html! {
             <div>
                 <div>
@@ -92,6 +97,8 @@ impl Component for App {
                         accept="image/png, image/jpeg"
                         multiple=false
                         onchange={ctx.link().callback(move |e: Event| {
+                            link.send_message(Msg::FileLoading);
+                            // send message here to indicate start file loading
                             let mut result = Vec::new();
                             let input: HtmlInputElement = e.target_unchecked_into();
 
@@ -108,7 +115,10 @@ impl Component for App {
                     />
                 <div>
                     <h1>
-                         { global_state_str } 
+                    if self.file_loading {
+                        // TODO ADD LOADING STUFF
+                        { "FILE LOADING ..." }
+                    }
                     </h1>
                 </div>
                 </div>
@@ -128,7 +138,7 @@ impl App {
                             { img_html_from_bytes(data) }
                         </div>
                         <div class="cell">
-                            <ThresholdImage
+                         <ThresholdImage
                                 bytes={data}
                                 />
                         </div>

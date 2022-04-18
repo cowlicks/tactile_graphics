@@ -7,3 +7,4 @@ mod stl;
 pub mod threshold;
 pub mod utils;
 mod store;
+pub mod number_input;
