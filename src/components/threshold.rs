@@ -7,6 +7,7 @@ use crate::{
     },
     threshold_img_buffer,
 };
+use chrono::Utc;
 use image::Luma;
 use image::{imageops::resize, DynamicImage, ImageFormat};
 use image::ImageBuffer;
@@ -53,7 +54,7 @@ pub struct ThresholdImage {
     state: Option<Rc<GlobalState>>,
 }
 
-macro_rules! _timeit {
+macro_rules! timeit {
     ($format_str:expr, $code:expr) => {
         {
             let start = Utc::now();
