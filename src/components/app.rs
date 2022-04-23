@@ -116,7 +116,7 @@ impl Component for App {
                 <div>
                     <h1>
                     if self.file_loading {
-                        // TODO ADD LOADING STUFF
+                        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                         { "FILE LOADING ..." }
                     }
                     </h1>
