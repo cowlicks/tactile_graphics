@@ -1,3 +1,5 @@
+use crate::components::stl::StlViewer;
+
 use std::rc::Rc;
 use web_sys::{
     Event,
@@ -141,6 +143,11 @@ impl App {
                          <ThresholdImage
                                 bytes={data}
                                 />
+                        if self.state.clone().map_or(false, |x| x.display_stl) {
+                            <StlViewer
+                                bytes={ Rc::clone(data) }
+                            />
+                        }
                         </div>
                     </div>
                 </div>
