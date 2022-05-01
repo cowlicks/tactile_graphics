@@ -148,7 +148,7 @@ impl Component for ThresholdImage {
                         <Slider label="Threshold Value"
                             min=1.0
                             max=255.0
-                            step=5.0
+                            step=1.0
                             onchange={onchange}
                             value={ state.threshold_value as f64 }
 
