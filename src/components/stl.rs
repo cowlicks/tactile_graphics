@@ -46,7 +46,8 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
 
     let inner = writer.into_inner().unwrap();
 
-    let g_file = gloo_file::File::new("test.stl", inner.as_slice());
+    let file_name = format!("{}.stl", state.file_name.clone().unwrap_or("no-name".to_string()));
+    let g_file = gloo_file::File::new(&file_name, inner.as_slice());
     use_effect(move || {
         STLViewer(g_file.as_ref(), "stl-cont");
         || info!("from destructor")
@@ -60,7 +61,7 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
             <p> { format!("buffer size: {}", inner.len()) } </p>
             <a id={ "download-button" }
                 target={ "_blank" }
-                download={ "test.stl" }
+                download={ file_name }
                 href={ "" }
             >
                 <button>{ "Download STL" }</button>

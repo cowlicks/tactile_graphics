@@ -6,6 +6,7 @@ pub struct GlobalState {
     pub stl_height: f64,
     pub stl_scale_factor: f64,
     pub display_stl: bool,
+    pub file_name: Option<String>,
     // TODO
     // unit is mm
     // pixels per unit length?
@@ -21,6 +22,7 @@ impl Default for GlobalState {
             stl_height: DEFAULT_STL_HEIGHT,
             stl_scale_factor: DEFAULT_SCALE_FACTOR,
             display_stl: false,
+            file_name: None,
         }
     }
 }
