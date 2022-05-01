@@ -5,6 +5,7 @@ pub struct GlobalState {
     pub threshold_value: u8,
     pub stl_height: f64,
     pub stl_scale_factor: f64,
+    pub display_stl: bool,
     // TODO
     // unit is mm
     // pixels per unit length?
@@ -19,6 +20,7 @@ impl Default for GlobalState {
             threshold_value: DEFAULT_THRESHOLD_VALUE,
             stl_height: DEFAULT_STL_HEIGHT,
             stl_scale_factor: DEFAULT_SCALE_FACTOR,
+            display_stl: false,
         }
     }
 }

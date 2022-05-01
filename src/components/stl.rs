@@ -16,7 +16,6 @@ use super::{
 #[derive(Properties, PartialEq)]
 pub struct StlViewerProps {
     pub bytes: Rc<Vec<u8>>,
-    pub threshold_value: u8,
 }
 
 #[function_component(StlViewer)]
@@ -34,7 +33,7 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
 
     let triangles = image_to_stl(
         image,
-        props.threshold_value,
+        state.threshold_value,
         state.stl_height,
         state.stl_scale_factor,
     )
@@ -56,7 +55,7 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
     html! {
         <p>
             <b>{ "STL view" }</b>
-            <p> { format!("threshold value: {}", &props.threshold_value) } </p>
+            <p> { format!("threshold value: {}", &state.threshold_value) } </p>
             <p> { format!("num bytes: {}", &props.bytes.len()) } </p>
             <p> { format!("buffer size: {}", inner.len()) } </p>
             <a id={ "download-button" }
