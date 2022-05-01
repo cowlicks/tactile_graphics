@@ -2,7 +2,7 @@ use crate::components::{
         number_input::NumberInput,
         slider::Slider, utils::maybe_resize_photon_image,
     };
-use log::info;
+use log::{info, warn};
 use web_sys::HtmlCanvasElement;
 use std::rc::Rc;
 use yew::{html, Component, Context, Html, Properties, NodeRef};
@@ -72,10 +72,22 @@ impl Component for ThresholdImage {
             photon_image: None,
         }
     }
+
     fn changed(&mut self, ctx: &Context<Self>) -> bool {
-        info!(" from threshold changed !!!!!!!!!!!!!!!!!!!!!!!");
+        let bytes = ctx.props().bytes.clone();
+        let link = ctx.link().clone();
+        spawn_local(async move {
+            let photon_image = photon_image_from(&bytes).await;
+
+            // TODO should i remove this?
+            let photon_image = maybe_resize_photon_image(photon_image);
+            link.send_message(Msg::PhotonImageReady(photon_image));
+        });
+        self.canvas_loaded = false;
         true
     }
+
+
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         //info!("Threshold component update");

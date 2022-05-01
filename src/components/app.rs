@@ -124,38 +124,28 @@ impl Component for App {
                     </h1>
                 </div>
                 </div>
-                { self.view_file(&ctx) }
-            </div>
-        }
-    }
-}
-
-impl App {
-    fn view_file(&self, _ctx: &Context<Self>) -> Html {
-        if let Some(data) = &self.file_bytes {
-            html! {
-                <div class="image-container">
-                    <div class="images">
-                        <div class="cell">
-                            { img_html_from_bytes(data) }
-                        </div>
-                        <div class="cell">
-                         <ThresholdImage
-                                bytes={data}
+                if let Some(data) = &self.file_bytes {
+                    <div class="image-container">
+                        <div class="images">
+                            <div class="cell">
+                                { img_html_from_bytes(data) }
+                            </div>
+                            <div class="cell">
+                             <ThresholdImage
+                                    bytes={ Rc::clone(data) }
+                                    />
+                            if self.state.clone().map_or(false, |x| x.display_stl) {
+                                <StlViewer
+                                    bytes={ Rc::clone(data) }
                                 />
-                        if self.state.clone().map_or(false, |x| x.display_stl) {
-                            <StlViewer
-                                bytes={ Rc::clone(data) }
-                            />
-                        }
+                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        } else {
-            html! {
-                <p>{ "Choose a file to convert to stl" }</p>
-            }
+                } else {
+                    <p>{ "Choose a file to convert to stl" }</p>
+                }
+            </div>
         }
     }
 }
