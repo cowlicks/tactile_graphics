@@ -176,19 +176,20 @@ mod tests {
 
     #[test]
     fn test_sort_edges_stick_figure() -> Result<(), Box<dyn Error>> {
-        let edges = edge_file(DEFAULT_THRESHOLD, "./images/stick-figure.png")?;
-        let sorted = sort_edges(edges.closed_edges);
+        let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/stick-figure.png")?;
+        let _sorted = sort_edges(edges.closed_edges);
         //assert_eq!(sorted.len(), 5, "Should equal the total number of shapes");
         Ok(())
     }
 
     #[test]
     fn test_sort_edges_donut_within_donut() {
-        let mut d = donut(100., 1., 0., 0.);
-        d.append(&mut donut(50., 1., 10., 10.));
+        let mut d = donut(50., 1., 10., 10.);
+        d.append(&mut donut(100., 1., 0., 0.));
         let nodes = sort_edges(d.clone());
+        println!("{nodes:#?}");
         assert_eq!(nodes.len(), 2, "should be two donuts");
-        assert_eq!(nodes[0].data, d[0]);
-        assert_eq!(nodes[0].children[0].data, d[1]);
+        assert_eq!(nodes[0].data, d[3]);
+        assert_eq!(nodes[0].children[0].data, d[2]);
     }
 }
