@@ -154,7 +154,7 @@ mod tests {
         let outer = Node::new(closed_edge(SIDE, X0, Y0, false));
         let inner = Node::new(closed_edge(SIDE / 2., X0 + SIDE / 4., Y0 + SIDE / 4., true));
         assert_eq!(inner.is_child_of(&outer), true, "inner is child of outer");
-        assert_eq!(outer.is_parent_of(&inner), true, "outer is parent of inner");
+        assert_eq!(outer._is_parent_of(&inner), true, "outer is parent of inner");
 
         let mut nodes = vec![];
         insert(&mut nodes, outer);
