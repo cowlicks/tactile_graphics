@@ -84,7 +84,7 @@ mod tests {
         let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/stick-figure.png")?;
         let nodes = sort_edges(edges.closed_edges);
         for (i, n) in nodes.into_iter().enumerate() {
-            info!("node {:?} has {:?} children", i, n.children.len());
+            println!("node {:?} has {:?} children", i, n.children.len());
             let json_value = multipolygon_from_vec_edge_and_holes(vec![n]);
             write_file(json_value.to_string(), &format!("out_{i}.json"))?;
         }
