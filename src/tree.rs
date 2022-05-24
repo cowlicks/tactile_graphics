@@ -157,9 +157,9 @@ mod tests {
         assert_eq!(outer._is_parent_of(&inner), true, "outer is parent of inner");
 
         let mut nodes = vec![];
-        insert(&mut nodes, outer);
-        assert_eq!(nodes.len(), 1);
         insert(&mut nodes, inner);
+        assert_eq!(nodes.len(), 1);
+        insert(&mut nodes, outer);
         assert_eq!(nodes.len(), 1);
         assert_eq!(nodes[0].children.len(), 1);
     }
