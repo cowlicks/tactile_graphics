@@ -24,7 +24,7 @@ fn insert(nodes: &mut Vec<Node>, mut new_node: Node) {
     //// but if we insert nodes in the order that they were created, this is never the case
 
     //// find the parent of the new data
-    //let some_parent_index = nodes.iter().position(|child| child.is_parent_of(&new_node));
+    //let some_parent_index = nodes.iter().position(|child| child._is_parent_of(&new_node));
 
     //// insert the new data into its parent
     //if let Some(index) = some_parent_index {
