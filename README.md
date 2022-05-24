@@ -12,6 +12,7 @@ Note you need to have [Trunk](https://trunkrs.dev/) installed (which requires Ca
 
 ## Improvements
 
-Add a way to convert SVG to STL
+Expot it to foo.stl instead of foo.png.stl
 Show scale in STL viewer
+Add a way to convert SVG to STL
 Show loading in the threshold, and stl
