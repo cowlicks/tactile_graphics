@@ -168,8 +168,8 @@ mod tests {
     fn test_sort_edges() -> Result<(), Box<dyn Error>> {
         let d = donut(100., 1., 0., 0.);
         let nodes = sort_edges(d.clone());
-        assert_eq!(nodes[0].data, d[0]);
-        assert_eq!(nodes[0].children[0].data, d[1]);
+        assert_eq!(nodes[0].data, d[1]);
+        assert_eq!(nodes[0].children[0].data, d[0]);
 
         Ok(())
     }
