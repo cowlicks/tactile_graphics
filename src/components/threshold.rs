@@ -2,7 +2,7 @@ use crate::components::{
         number_input::NumberInput,
         slider::Slider, utils::maybe_resize_photon_image,
     };
-use log::{info, warn};
+use log::info;
 use web_sys::HtmlCanvasElement;
 use std::rc::Rc;
 use yew::{html, Component, Context, Html, Properties, NodeRef};
