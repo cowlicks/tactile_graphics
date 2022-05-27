@@ -55,6 +55,20 @@ impl Vert {
         (self.x * other.x) + (self.y * other.y)
     }
 
+    pub fn determinant(&self, other: &Vert) -> f64 {
+        (self.x * other.y) - (self.y * other.x)
+    }
+
+    /// angle between the self and other as vectors.
+    /// Counterclockwise is positive.
+    /// The result is in radians from -PI to PI
+    /// https://stackoverflow.com/a/16544330/1609380
+    pub fn angle_between(&self, other: &Vert) -> f64 {
+        let dot = self.dot_product(&other);
+        let determinant = self.determinant(&other);
+        determinant.atan2(dot)
+    }
+
     pub fn magnitude(&self) -> f64 {
         (self.x.powi(2) + self.y.powi(2)).sqrt()
     }
@@ -204,5 +218,22 @@ mod tests {
         assert_eq!(v.x, 1.);
         assert_eq!(v.y, 3.);
         Ok(())
+    }
+    
+    #[test]
+    fn angle_between_counter_cw() {
+        let a = Vert::new(1., 0.);
+        let b = Vert::new(0., 1.);
+        let result = a.angle_between(&b);
+        assert!(result > 0.);
+        assert!((result - std::f64::consts::FRAC_PI_2).abs() < 1e-10);
+    }
+    #[test]
+    fn angle_between_cw() {
+        let a = Vert::new(0., 1.);
+        let b = Vert::new(1., 0.);
+        let result = a.angle_between(&b);
+        assert!(result < 0.);
+        assert!((result + std::f64::consts::FRAC_PI_2).abs() < 1e-10);
     }
 }
