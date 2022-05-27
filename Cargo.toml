@@ -24,6 +24,8 @@ photon-rs = "0.3.0"
 yewdux = "0.7"
 yewdux-functional = "0.1.0"
 
+env_logger = "0.9.0"
+
 #preformance stuff
 [dependencies.chrono]
 version = "0.4"
