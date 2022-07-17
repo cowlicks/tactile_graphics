@@ -1,4 +1,4 @@
-use log::{info, trace, error};
+use log::{info, trace};
 
 use crate::{vert::Vert, edge::Edge};
 
