@@ -4,6 +4,8 @@ use std::error::Error;
 use crate::edge::Edge;
 use crate::tree::Node;
 use crate::util::write_file;
+use crate::constants::TEST_OUTPUT_DIR;
+
 
 pub fn feature_collection_from_values(values: Vec<Value>) -> Value {
     json!({
@@ -86,7 +88,7 @@ mod tests {
         for (i, n) in nodes.into_iter().enumerate() {
             println!("node {:?} has {:?} children", i, n.children.len());
             let json_value = multipolygon_from_vec_edge_and_holes(vec![n]);
-            write_file(json_value.to_string(), &format!("out_{i}.json"))?;
+            write_file(json_value.to_string(), &format!("{TEST_OUTPUT_DIR}/out_{i}.json"))?;
         }
         Ok(())
     }

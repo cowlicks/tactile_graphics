@@ -1,5 +1,6 @@
 #![feature(drain_filter, const_float_bits_conv, test)]
 
+pub mod constants;
 pub mod components;
 pub mod earcut;
 pub mod edge;
@@ -14,6 +15,7 @@ pub mod vert;
 
 use std::error::Error;
 
+use constants::TEST_OUTPUT_DIR;
 use components::utils::SplitColor;
 use image::error::{LimitError, LimitErrorKind};
 use image::imageops::ColorMap;
@@ -188,7 +190,7 @@ mod tests {
     #[test]
     fn edge_file_small_wolf() -> Result<(), Box<dyn Error>> {
         let edges = edge_file(DEFAULT_THRESHOLD_VALUE, "./images/small-wolf.png")?;
-        save_vec_edge_as_geojson(edges.closed_edges, "small-wolf.json")?;
+        save_vec_edge_as_geojson(edges.closed_edges, &format!("{TEST_OUTPUT_DIR}/small-wolf.json"))?;
         //assert_eq!(edges.closed_edges.len(), 7);
         Ok(())
     }
