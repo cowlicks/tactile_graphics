@@ -2,6 +2,61 @@ import * as THREE from '/assets/three.module.js';
 import { OrbitControls } from '/assets/OrbitControls.js';
 import { STLLoader } from '/assets/STLLoader.js';
 
+import {
+  Canvg,
+  presets
+} from 'https://cdn.skypack.dev/canvg@^4.0.0';
+
+const preset = presets.offscreen()
+
+const default_svg_to_png_height = 600;
+const default_svg_to_png_width = 600;
+
+async function svg_string_to_bitmap_data_url(svg_string) {
+  const height = default_svg_to_png_height;
+  const width = default_svg_to_png_width;
+  const canvas = new OffscreenCanvas(width, height)
+  const ctx = canvas.getContext('2d')
+  const v = await Canvg.from(ctx, svg_string, preset)
+
+  // Render only first frame, ignoring animations and mouse.
+  await v.render()
+
+  const blob = await canvas.convertToBlob()
+  const pngUrl = URL.createObjectURL(blob)
+
+  return pngUrl
+}
+
+async function testCanvg() {
+  async function dlToSting() {
+    return new Promise(resolve => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          resolve(xhttp.responseText);
+        }
+    };
+    xhttp.open("GET", "/example.svg", true);
+    xhttp.send();
+    });
+  }
+
+  let svg = await dlToSting();
+  console.log('got svg string', svg.slice(0, 20));
+  let pngUrl = await svg_string_to_bitmap_data_url(
+    svg,
+  );
+
+  const img = document.createElement('img');
+  img.src = pngUrl;
+  console.log(pngUrl);
+  document.getElementsByTagName('body')[0].appendChild(img);
+
+}
+
+//testCanvg();
+
 export function canvas_from_image(durl) {
   console.log('from javascript');
   return new Promise((resolve) => {
