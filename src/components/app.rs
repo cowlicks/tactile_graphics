@@ -27,6 +27,7 @@ pub enum Msg {
 
 pub struct App {
     reader: Option<FileReader>,
+    file_name: Option<String>,
     file_bytes: Option<Rc<Vec<u8>>>,
     file_loading: bool,
     dispatch: Dispatch<BasicStore<GlobalState>>,
@@ -41,6 +42,7 @@ impl Component for App {
         let dispatch = Dispatch::bridge_state(ctx.link().callback(Msg::State));
         Self {
             reader: None,
+            file_name: None,
             file_bytes: None,
             file_loading: false,
             dispatch,
@@ -59,6 +61,7 @@ impl Component for App {
                 true
             }
             Msg::LoadedBytes(file_name, data) => {
+                self.file_name = Some(file_name.clone());
                 self.dispatch.reduce(move |state| state.file_name = Some(file_name.clone()));
                 self.file_bytes = Some(Rc::from(data));
                 self.file_loading = false;
