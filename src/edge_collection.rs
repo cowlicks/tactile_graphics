@@ -294,7 +294,11 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
     trace!("finished walking through zig-zag, counted [{count}] zig-zags
           final index [{index}]");
 
-    if MIN_ZIG_ZAG_COUNT >= 2 {
+    if count + straggling_zag >= MIN_ZIG_ZAG_COUNT {
+        info!("Removing zig zags:
+              got [{count}]
+              stragling [{straggling_zag}]
+              final index [{index}]");
         // remove from start which is len - count * 2 up to len - 2
         let split_at_n = len - 2 - (2 * count) - straggling_zag;
         let mut zig_zag_tail = edge.verts.split_off(split_at_n);
