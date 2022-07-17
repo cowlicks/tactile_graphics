@@ -1,4 +1,4 @@
-use log::{info, trace};
+use log::{info, trace, error};
 
 use crate::{vert::Vert, edge::Edge};
 
@@ -43,6 +43,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
                 target.pop_back();
             }
             target.append(&mut other);
+            maybe_remove_zig_zags(target);
         }
         _ if (target_back == other_back && target_front == other_front) => {
             other.pop_back();
@@ -52,6 +53,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
                 target.pop_back();
             }
             target.append(&mut other);
+            maybe_remove_zig_zags(target);
         }
         _ if target_back == other_front => {
             other.pop_front();
@@ -61,6 +63,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
                 target.pop_back();
             }
             target.append(&mut other);
+            maybe_remove_zig_zags(target);
         }
         _ if target_back == other_back => {
             other.pop_back();
@@ -71,6 +74,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
                 target.pop_back();
             }
             target.append(&mut other);
+            maybe_remove_zig_zags(target);
         }
 
         _ if target_front == other_front => {
@@ -81,6 +85,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
             for v in other {
                 target.push_front(v);
             }
+            maybe_remove_zig_zags(target);
         }
 
         _ if target_front == other_back => {
@@ -93,6 +98,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
             for v in other.into_iter().rev() {
                 target.push_front(v);
             }
+            maybe_remove_zig_zags(target);
         }
         _ => panic!(
             "No edges lined up, can't connect
