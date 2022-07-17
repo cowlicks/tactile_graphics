@@ -222,9 +222,10 @@ fn edge_segment_length(edge: &Edge, index: usize) -> f64 {
 static MIN_ZIG_ZAG_COUNT: usize  = 2;
 
 fn maybe_remove_zig_zags(edge: &mut Edge) {
+    // 2 zig-zags + a non-zig-zag point on each end
+    let min_length = MIN_ZIG_ZAG_COUNT * 2 + 2;
 
-    let min_length = MIN_ZIG_ZAG_COUNT * 2 + 2;  // 2 zig-zags + a non-zig-zag point on each end
-
+    // explanation of the indices used
     // len      no index
     // len - 1  last vert, no angle
     // len - 2  last angle, first angle past zig-zag.
@@ -233,7 +234,7 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
     let len = edge.len();
 
     if len < min_length {
-        info!("Edge too short (len = {len}) must be at least {min_length}");
+        trace!("Edge too short (len = {len}) must be at least {min_length}");
         return;
     }
 
@@ -244,12 +245,12 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
 
     // last angle equals last zig, so zig zag is ongoing, so not over
     if (non_zig_zag_angle - initial_zig_angle).abs() < EPSILON {
-        info!("Can't remove zig-zig because there is none, or it has not ended");
+        trace!("Can't remove zig-zig because there is none, or it has not ended");
         return; // not end of zig-zag
     }
 
     if (initial_zag_angle + initial_zig_angle).abs() > EPSILON {
-        info!("Angles don't cancel so this is not a zig-zag");
+        trace!("Angles don't cancel so this is not a zig-zag");
         return; // angles don't cancel out, not zig-zag
     }
 
@@ -263,14 +264,14 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
         let zig_angle = edge_angle(edge, index - 1);
 
         if (zag_angle + zig_angle).abs() > EPSILON {
-            info!("Angles in zig-zag don't cancel, we must have reached the end");
+            trace!("Angles in zig-zag don't cancel, we must have reached the end");
             break; // angles don't cancel out
         }
 
         let zag_length = edge_segment_length(edge, index);
         let zig_length = edge_segment_length(edge, index - 1);
         if zig_length != initial_zig_length || zag_length != initial_zag_length {
-            info!("lengths in zig-zags don't match the original zig-zag length, we must have reached the end");
+            trace!("lengths in zig-zags don't match the original zig-zag length, we must have reached the end");
             break;
         }
 
@@ -282,7 +283,7 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
     // check for a final straggling zag
     let mut straggling_zag = 0;
     if index >= 2 { // might have a straggling zag
-        info!("Checking for a straggling zag");
+        trace!("Checking for a straggling zag");
         let zag_angle = edge_angle(edge, index);
         let zag_length = edge_segment_length(edge, index);
         if (zag_angle - initial_zag_angle).abs() < EPSILON && (zag_length - initial_zag_length).abs() < EPSILON {
@@ -301,7 +302,7 @@ fn maybe_remove_zig_zags(edge: &mut Edge) {
         edge.verts.push_back(zig_zag_tail.pop_back().unwrap());
         edge.verts.push_back(last);
     } else {
-        info!("number of zig-zags ({count}) didn't reach the minimum zig-zag count ({MIN_ZIG_ZAG_COUNT}) so doing nothing");
+        trace!("number of zig-zags ({count}) didn't reach the minimum zig-zag count ({MIN_ZIG_ZAG_COUNT}) so doing nothing");
     }
 
 }
