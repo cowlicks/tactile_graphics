@@ -161,6 +161,7 @@ impl Component for ThresholdImage {
                         />
                         <p> { "Choose a good threshold value" } </p>
                         <button
+                            class={ "convert-to-stl" }
                             onclick={onclick}
                         > { "Convert to STL" } </button>
                     </div>
