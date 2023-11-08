@@ -15,7 +15,7 @@ use wasm_bindgen::JsCast;
 
 /// Faster than reading bytes to with photon_rs::native::open_image. but async
 pub async fn photon_image_from(data: &Vec<u8>) -> PhotonImage {
-    let durl = data_url_from_img_bytes(&data).unwrap();
+    let durl = data_url_from_img_bytes(data).unwrap();
     let canvas = canvas_from_image(&durl)
         .await
         .dyn_into::<HtmlCanvasElement>()
@@ -82,16 +82,16 @@ pub fn maybe_resize_photon_image(img: PhotonImage) -> PhotonImage {
                     new_height,
                     photon_rs::transform::SamplingFilter::Nearest,
                 ));
-            return img;
+            img
         } else {
-            return img;
+            img
         }
 }
 
 pub fn draw_data_to_canvas(
     canvas: HtmlCanvasElement,
     data: Vec<u8>,
-    on_complete: (impl FnOnce(PhotonImage) -> () + 'static)
+    on_complete: (impl FnOnce(PhotonImage) + 'static)
 ) {
     canvas.set_width(500);
     wasm_bindgen_futures::spawn_local(async move {

@@ -36,7 +36,7 @@ fn insert(nodes: &mut Vec<Node>, mut new_node: Node) {
 }
 
 /// flatten_nodes to be passed to earcuttr
-fn flatten_nodes(t: Tree) -> Vec<Node> {
+fn flatten_nodes(mut t: Tree) -> Vec<Node> {
     let mut out: Vec<Node> = vec![];
     let mut holes: Vec<Node> = vec![];
 
@@ -45,10 +45,10 @@ fn flatten_nodes(t: Tree) -> Vec<Node> {
             holes.push(cc.clone());
         }
     }
-    out.append(&mut t.children.clone());
+    out.append(&mut t.children);
 
-    while !holes.is_empty() {
-        let h = holes.pop().expect("we just checked holes len above");
+    while let Some(h) = holes.pop() {
+        
         for child in h.children.iter() {
             for cc in child.children.iter() {
                 holes.push(cc.clone());

@@ -26,7 +26,7 @@ pub fn data_url_from_img_bytes(bytes: &Vec<u8>) -> Result<String, ImageError> {
 pub fn img_from_bytes(bytes: &Vec<u8>) -> Result<DynamicImage, ImageError> {
     let format = guess_format(bytes)?;
     info!("image format is {:?}", format);
-    load_from_memory_with_format(&bytes, format)
+    load_from_memory_with_format(bytes, format)
 }
 
 pub fn img_html_from_bytes(bytes: &Vec<u8>) -> Html {

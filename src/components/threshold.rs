@@ -157,7 +157,7 @@ impl Component for ThresholdImage {
                             min=0.0
                             max=200.0
                             onchange={height_onchange}
-                            value={ state.stl_height as f64 }
+                            value={ state.stl_height }
                         />
                         <p> { "Choose a good threshold value" } </p>
                         <button

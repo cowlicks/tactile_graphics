@@ -19,18 +19,18 @@ impl From<Vec<f64>> for Vert {
 
 impl From<Vert> for Vec<f64> {
     fn from(item: Vert) -> Self {
-        vec![item.x as f64, item.y as f64]
+        vec![item.x, item.y]
     }
 }
 impl From<&Vert> for Vec<f64> {
     fn from(item: &Vert) -> Self {
-        vec![item.x as f64, item.y as f64]
+        vec![item.x, item.y]
     }
 }
 
 impl From<&Vert> for [f64; 2] {
     fn from(item: &Vert) -> Self {
-        [(item.x as f64), (item.y as f64)]
+        [item.x, item.y]
     }
 }
 
@@ -64,8 +64,8 @@ impl Vert {
     /// The result is in radians from -PI to PI
     /// https://stackoverflow.com/a/16544330/1609380
     pub fn angle_between(&self, other: &Vert) -> f64 {
-        let dot = self.dot_product(&other);
-        let determinant = self.determinant(&other);
+        let dot = self.dot_product(other);
+        let determinant = self.determinant(other);
         determinant.atan2(dot)
     }
 

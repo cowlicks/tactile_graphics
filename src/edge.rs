@@ -120,7 +120,7 @@ impl Edge {
             }
             return false;
         }
-        return true;
+        true
     }
 }
 
@@ -149,7 +149,7 @@ impl<const N: usize> From<[Vert; N]> for Edge {
 }
 
 fn get_extremes(verts: &[Vert]) -> (Option<f64>, Option<f64>, Option<f64>, Option<f64>) {
-    if verts.len() == 0 {
+    if verts.is_empty() {
         return (None, None, None, None);
     }
 
@@ -207,7 +207,7 @@ impl IntoIterator for Edge {
 
 pub fn edge_to_geojson(edge: &Edge) -> Vec<Vec<f64>> {
     edge.iter()
-        .map(|vert| vec![vert.x as f64, vert.y as f64])
+        .map(|vert| vec![vert.x, vert.y])
         .collect()
 }
 

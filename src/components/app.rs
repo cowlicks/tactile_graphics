@@ -59,7 +59,7 @@ impl Component for App {
                 true
             }
             Msg::LoadedBytes(file_name, data) => {
-                self.dispatch.reduce(move |state| state.file_name = Some(file_name.clone()));
+                self.dispatch.reduce(move |state| state.file_name = Some(file_name));
                 self.file_bytes = Some(Rc::from(data));
                 self.file_loading = false;
                 self.reader = None;

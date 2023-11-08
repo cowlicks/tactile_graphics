@@ -43,9 +43,9 @@ pub mod testing {
     }
 
     pub fn donut(side: f32, thickness: f32, x: f32, y: f32) -> Vec<Edge> {
-        return vec![
+        vec![
             closed_edge(side - thickness * 2., x + thickness, y + thickness, true),
             closed_edge(side, x, y, false),
-        ];
+        ]
     }
 }

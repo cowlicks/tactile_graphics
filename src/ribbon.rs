@@ -11,24 +11,24 @@ pub fn edge_to_ribbon(edge: &Edge, height: f64) -> Vec<f64> {
             let vn = &verts[i];
             let vnp1 = &verts[i + 1];
             if !is_hole {
-                return vec![
+                vec![
                     vn.to3(0.),
                     vn.to3(height),
                     vnp1.to3(0.),
                     vn.to3(height),
                     vnp1.to3(height),
                     vnp1.to3(0.),
-                ];
+                ]
             } else {
-                return vec![
+                vec![
                     vn.to3(0.),
                     vnp1.to3(0.),
                     vn.to3(height),
                     vn.to3(height),
                     vnp1.to3(0.),
                     vnp1.to3(height),
-                ];
-            };
+                ]
+            }
         })
         .flatten()
         .collect()
