@@ -11,7 +11,7 @@ pub struct Tree {
 fn insert(nodes: &mut Vec<Node>, mut new_node: Node) {
     // get children of the new data
     let data_children: Vec<Node> = nodes
-        .drain_filter(|child| child.is_child_of(&new_node))
+        .extract_if(|child| child.is_child_of(&new_node))
         .collect();
 
     // insert those children as children of the new data

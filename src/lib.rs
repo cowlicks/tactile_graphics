@@ -1,4 +1,4 @@
-#![feature(drain_filter, const_float_bits_conv, test)]
+#![feature(extract_if, const_float_bits_conv, test)]
 
 pub mod components;
 pub mod earcut;
