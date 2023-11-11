@@ -91,7 +91,7 @@ pub fn maybe_resize_photon_image(img: PhotonImage) -> PhotonImage {
 pub fn draw_data_to_canvas(
     canvas: HtmlCanvasElement,
     data: Vec<u8>,
-    on_complete: (impl FnOnce(PhotonImage) + 'static)
+    on_complete: impl FnOnce(PhotonImage) + 'static,
 ) {
     canvas.set_width(500);
     wasm_bindgen_futures::spawn_local(async move {
