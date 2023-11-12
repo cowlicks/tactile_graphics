@@ -1,5 +1,3 @@
-#![feature(test)]
-
 pub mod components;
 pub mod earcut;
 pub mod edge;
@@ -22,8 +20,8 @@ use image::{
     DynamicImage, GenericImage, GenericImageView, GrayImage, ImageBuffer, ImageError, Luma, Rgba,
 };
 
-use vert::{get_quad_edge, QuadCase};
 use edge_collection::Edges;
+use vert::{get_quad_edge, QuadCase};
 
 pub fn rgb_to_greyscale(p: Rgba<u8>) -> Rgba<u8> {
     let x: u8 = (0.2126 * (p[0] as f64) + 0.7152 * (p[1] as f64) + 0.0722 * (p[2] as f64)) as u8;
@@ -150,34 +148,9 @@ pub fn threshold_png(in_filename: &str, out_filename: &str) -> Result<(), Box<dy
 
 #[cfg(test)]
 mod tests {
-    use crate::json::save_vec_edge_as_geojson;
-    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
     use super::*;
-
-    extern crate test;
-    use test::Bencher;
-
-    #[bench]
-    fn grey_then_color_map_in_place_threshold(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let img = ImageReader::open("./images/doggy.png")?
-            .with_guessed_format()?
-            .decode()?;
-        b.iter(|| {
-            ret_thresholded_img(img.clone(), SplitColor::new(127));
-        });
-        Ok(())
-    }
-
-    #[bench]
-    fn inplace_custom_threshold(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let img = ImageReader::open("./images/doggy.png")?
-            .with_guessed_format()?
-            .decode()?;
-        b.iter(|| {
-            threshold_img(&mut img.clone(), 128);
-        });
-        Ok(())
-    }
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
+    use crate::json::save_vec_edge_as_geojson;
 
     #[test]
     fn edge_file_stick_figure() -> Result<(), Box<dyn Error>> {
@@ -191,31 +164,5 @@ mod tests {
         save_vec_edge_as_geojson(edges.closed_edges, "small-wolf.json")?;
         //assert_eq!(edges.closed_edges.len(), 7);
         Ok(())
-    }
-
-    #[bench]
-    fn edge_image_doggy(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let mut img = ImageReader::open("./images/doggy.png")?
-            .with_guessed_format()?
-            .decode()?;
-        threshold_img(&mut img, DEFAULT_THRESHOLD_VALUE);
-
-        b.iter(|| {
-            edge_img(&img).unwrap();
-        });
-        return Ok(());
-    }
-
-    #[bench]
-    fn edge_image_eagle_png(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let mut img = ImageReader::open("./images/eagle.png")?
-            .with_guessed_format()?
-            .decode()?;
-        threshold_img(&mut img, DEFAULT_THRESHOLD_VALUE);
-
-        b.iter(|| {
-            edge_img(&img).unwrap();
-        });
-        return Ok(());
     }
 }

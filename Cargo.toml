@@ -36,3 +36,10 @@ version = "0.24.0"
 default-features = false
 features = ["gif", "jpeg", "ico", "png", "pnm", "tga", "tiff", "webp", "bmp", "hdr", "dxt", "dds", "farbfeld"]
 
+
+[dev-dependencies]
+divan = "0.1"
+
+[[bench]]
+name = "image"
+harness = false

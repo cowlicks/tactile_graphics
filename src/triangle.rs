@@ -177,52 +177,8 @@ pub fn image_file_to_stl(
 
 #[cfg(test)]
 mod tests {
-    use test::Bencher;
-
     use super::*;
     use std::error::Error;
-    extern crate test;
-
-    static SOME_HEIGHT: f64 = 5.0;
-    static SOME_SCALE_FACTOR: f64 = 3.0;
-
-    #[bench]
-    fn bench_img_to_stl_small_wolf(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let img = ImageReader::open("./images/small-wolf.png")?
-            .with_guessed_format()?
-            .decode()?;
-
-        b.iter(|| {
-            let _ = image_to_stl(
-                img.clone(),
-                DEFAULT_THRESHOLD_VALUE,
-                SOME_HEIGHT,
-                SOME_SCALE_FACTOR,
-            )
-            .unwrap()
-            .collect::<Vec<f64>>();
-        });
-        Ok(())
-    }
-
-    #[bench]
-    fn bench_img_to_stl_middle_finger(b: &mut Bencher) -> Result<(), Box<dyn Error>> {
-        let img = ImageReader::open("./images/doggy.png")?
-            .with_guessed_format()?
-            .decode()?;
-
-        b.iter(|| {
-            let _ = image_to_stl(
-                img.clone(),
-                DEFAULT_THRESHOLD_VALUE,
-                SOME_HEIGHT,
-                SOME_SCALE_FACTOR,
-            )
-            .unwrap()
-            .collect::<Vec<f64>>();
-        });
-        Ok(())
-    }
 
     #[test]
     fn test_earcut_steps_3d() -> Result<(), Box<dyn Error>> {
