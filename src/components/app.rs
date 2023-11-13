@@ -1,19 +1,16 @@
 use crate::components::stl::StlViewer;
 
 use std::rc::Rc;
-use web_sys::{
-    Event,
-    HtmlInputElement
-};
+use web_sys::{Event, HtmlInputElement};
 use yew::{html, html::TargetCast, Component, Context, Html};
 
 use gloo_file::callbacks::FileReader;
 use gloo_file::File;
 use log::info;
 
+use super::store::GlobalState;
 use crate::components::image::img_html_from_bytes;
 use crate::components::threshold::ThresholdImage;
-use super::store::GlobalState;
 
 use yewdux::prelude::*;
 
@@ -23,7 +20,6 @@ pub enum Msg {
     Files(Vec<File>),
     State(Rc<GlobalState>),
 }
-
 
 pub struct App {
     reader: Option<FileReader>,
@@ -44,7 +40,7 @@ impl Component for App {
             file_bytes: None,
             file_loading: false,
             dispatch,
-            state: Default::default()
+            state: Default::default(),
         }
     }
 
@@ -59,7 +55,8 @@ impl Component for App {
                 true
             }
             Msg::LoadedBytes(file_name, data) => {
-                self.dispatch.reduce(move |state| state.file_name = Some(file_name));
+                self.dispatch
+                    .reduce(move |state| state.file_name = Some(file_name));
                 self.file_bytes = Some(Rc::from(data));
                 self.file_loading = false;
                 self.reader = None;

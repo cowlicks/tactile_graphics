@@ -6,6 +6,6 @@ mod slider;
 mod stl;
 #[macro_use]
 pub mod threshold;
-pub mod utils;
-mod store;
 pub mod number_input;
+mod store;
+pub mod utils;

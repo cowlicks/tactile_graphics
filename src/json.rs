@@ -73,11 +73,11 @@ pub fn multipolygon_from_vec_edge_and_holes(data: Vec<Node>) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
+    use crate::edge_file;
     use crate::tree::sort_edges;
     use crate::util::write_file;
     use std::error::Error;
-    use crate::edge_file;
-    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
 
     #[test]
     fn test_geojson() -> Result<(), Box<dyn Error>> {

@@ -1,17 +1,16 @@
-use image::Luma;
-use image::imageops::ColorMap;
-use photon_rs::transform::resize;
-use photon_rs::monochrome::threshold;
-use photon_rs::PhotonImage;
-use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
-use crate::components::constants::VIEW_WIDTH_PX;
 use super::external::canvas_from_image;
 use super::image::data_url_from_img_bytes;
+use crate::components::constants::VIEW_WIDTH_PX;
+use image::imageops::ColorMap;
+use image::Luma;
+use photon_rs::monochrome::threshold;
+use photon_rs::transform::resize;
+use photon_rs::PhotonImage;
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement};
 
 use log::info;
 
 use wasm_bindgen::JsCast;
-
 
 /// Faster than reading bytes to with photon_rs::native::open_image. but async
 pub async fn photon_image_from(data: &Vec<u8>) -> PhotonImage {
@@ -33,17 +32,14 @@ pub async fn photon_image_from(data: &Vec<u8>) -> PhotonImage {
 }
 
 pub fn context_from_canvas(canvas: &HtmlCanvasElement) -> CanvasRenderingContext2d {
-        canvas
-            .get_context("2d")
-            .unwrap()
-            .unwrap()
-            .dyn_into::<web_sys::CanvasRenderingContext2d>()
-            .unwrap()
+    canvas
+        .get_context("2d")
+        .unwrap()
+        .unwrap()
+        .dyn_into::<web_sys::CanvasRenderingContext2d>()
+        .unwrap()
 }
-pub fn threshold_canvas(
-    canvas: HtmlCanvasElement,
-    value: u32,
-    ) {
+pub fn threshold_canvas(canvas: HtmlCanvasElement, value: u32) {
     wasm_bindgen_futures::spawn_local(async move {
         info!("from draw_data_to_canvas");
         let ctx = context_from_canvas(&canvas);
@@ -52,40 +48,35 @@ pub fn threshold_canvas(
             "reading canvas into photon image took {}",
             photon_rs::open_image(canvas.clone(), ctx.clone())
         );
-        timeit!(
-            "threshold took {}",
-            threshold(
-                &mut new_image,
-                value,
-            )
-        );
+        timeit!("threshold took {}", threshold(&mut new_image, value,));
 
         timeit!(
             "photon_rs::putImageData threshold took {}",
             photon_rs::putImageData(canvas, ctx, new_image)
-            );
+        );
     });
 }
 
 pub fn maybe_resize_photon_image(img: PhotonImage) -> PhotonImage {
-        if img.get_width() > VIEW_WIDTH_PX {
-            let scale = (VIEW_WIDTH_PX as f64) / (img.get_width() as f64);
+    if img.get_width() > VIEW_WIDTH_PX {
+        let scale = (VIEW_WIDTH_PX as f64) / (img.get_width() as f64);
 
-            let new_width = (scale * img.get_width() as f64) as u32;
-            let new_height = (scale * img.get_height() as f64) as u32;
+        let new_width = (scale * img.get_width() as f64) as u32;
+        let new_height = (scale * img.get_height() as f64) as u32;
 
-            let img = timeit!(
-                "resize took {}",
-                resize(
-                    &img,
-                    new_width,
-                    new_height,
-                    photon_rs::transform::SamplingFilter::Nearest,
-                ));
-            img
-        } else {
-            img
-        }
+        let img = timeit!(
+            "resize took {}",
+            resize(
+                &img,
+                new_width,
+                new_height,
+                photon_rs::transform::SamplingFilter::Nearest,
+            )
+        );
+        img
+    } else {
+        img
+    }
 }
 
 pub fn draw_data_to_canvas(
@@ -96,11 +87,9 @@ pub fn draw_data_to_canvas(
     canvas.set_width(500);
     wasm_bindgen_futures::spawn_local(async move {
         info!("from draw_data_to_canvas");
-        let new_image = timeit!(
-            "photon_image_from took {}", {
+        let new_image = timeit!("photon_image_from took {}", {
             photon_image_from(&data.to_vec()).await
-            }
-        );
+        });
 
         //let new_image = if new_image.get_width() > VIEW_WIDTH_PX {
 
@@ -132,16 +121,13 @@ pub fn draw_data_to_canvas(
             .dyn_into::<web_sys::CanvasRenderingContext2d>()
             .unwrap();
 
-
         timeit!(
             "photon_rs::putImageData took {}",
             photon_rs::putImageData(canvas, ctx, new_image.clone())
-            );
+        );
         on_complete(new_image);
     });
-
 }
-
 
 #[derive(Clone, Copy)]
 pub struct SplitColor {
@@ -189,5 +175,3 @@ impl ColorMap for SplitColor {
         luma[0] = new_color;
     }
 }
-
-

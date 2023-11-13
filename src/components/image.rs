@@ -2,10 +2,7 @@ use log::info;
 use yew::{html, Html};
 
 use base64::encode;
-use image::{
-    guess_format, load_from_memory_with_format, DynamicImage,
-    ImageError, ImageFormat,
-};
+use image::{guess_format, load_from_memory_with_format, DynamicImage, ImageError, ImageFormat};
 use std::io::Cursor;
 
 fn format_to_dataurl_media_type(fmt: ImageFormat) -> String {

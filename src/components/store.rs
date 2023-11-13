@@ -1,4 +1,4 @@
-use super::constants::{DEFAULT_STL_HEIGHT, DEFAULT_THRESHOLD_VALUE, DEFAULT_SCALE_FACTOR};
+use super::constants::{DEFAULT_SCALE_FACTOR, DEFAULT_STL_HEIGHT, DEFAULT_THRESHOLD_VALUE};
 
 #[derive(Clone)]
 pub struct GlobalState {

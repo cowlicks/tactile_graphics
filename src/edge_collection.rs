@@ -1,4 +1,4 @@
-use crate::{vert::Vert, edge::Edge};
+use crate::{edge::Edge, vert::Vert};
 
 #[derive(Debug)]
 pub struct Edges {
@@ -232,5 +232,4 @@ mod tests {
         assert_eq!(es.edges.len(), 1);
         assert_eq!(es.edges[0].len(), 3);
     }
-
 }

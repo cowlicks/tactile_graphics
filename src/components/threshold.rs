@@ -1,17 +1,18 @@
 use crate::components::{
-        number_input::NumberInput,
-        slider::Slider, utils::maybe_resize_photon_image,
-    };
+    number_input::NumberInput, slider::Slider, utils::maybe_resize_photon_image,
+};
 use log::info;
-use web_sys::HtmlCanvasElement;
+use photon_rs::{monochrome::threshold, PhotonImage};
 use std::rc::Rc;
-use yew::{html, Component, Context, Html, Properties, NodeRef};
-use yewdux::prelude::*;
 use wasm_bindgen_futures::spawn_local;
-use photon_rs::{PhotonImage, monochrome::threshold};
+use web_sys::HtmlCanvasElement;
+use yew::{html, Component, Context, Html, NodeRef, Properties};
+use yewdux::prelude::*;
 
-use super::{utils::{photon_image_from, context_from_canvas}, store::GlobalState};
-
+use super::{
+    store::GlobalState,
+    utils::{context_from_canvas, photon_image_from},
+};
 
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -34,17 +35,12 @@ pub struct ThresholdImage {
 }
 
 macro_rules! timeit {
-    ($format_str:expr, $code:expr) => {
-        {
-            let start = chrono::Utc::now();
-            let out = $code;
-            info!(
-                $format_str,
-                (chrono::Utc::now() - start).num_milliseconds()
-            );
-            out
-        }
-    };
+    ($format_str:expr, $code:expr) => {{
+        let start = chrono::Utc::now();
+        let out = $code;
+        info!($format_str, (chrono::Utc::now() - start).num_milliseconds());
+        out
+    }};
 }
 
 impl Component for ThresholdImage {
@@ -87,17 +83,18 @@ impl Component for ThresholdImage {
         true
     }
 
-
-
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         //info!("Threshold component update");
         match msg {
             Msg::State(state) => {
-                    if self.last_threshold_value != Some(state.threshold_value) {
-                        info!("Threshold value changed from {:?} to {:?}", self.last_threshold_value, state.threshold_value);
-                        self.last_threshold_value = Some(state.threshold_value);
-                        ctx.link().send_message(Msg::UpdateImage);
-                    }
+                if self.last_threshold_value != Some(state.threshold_value) {
+                    info!(
+                        "Threshold value changed from {:?} to {:?}",
+                        self.last_threshold_value, state.threshold_value
+                    );
+                    self.last_threshold_value = Some(state.threshold_value);
+                    ctx.link().send_message(Msg::UpdateImage);
+                }
                 self.state = Some(state);
                 true
             }
@@ -118,8 +115,8 @@ impl Component for ThresholdImage {
                         let mut img = photon_image.clone();
                         info!("threshold value = {}", state.threshold_value);
                         timeit!(
-                        "thresholding image took {}",
-                        threshold(&mut img, state.threshold_value as u32)
+                            "thresholding image took {}",
+                            threshold(&mut img, state.threshold_value as u32)
                         );
 
                         photon_rs::putImageData(canvas, ctx, img);
@@ -136,12 +133,20 @@ impl Component for ThresholdImage {
                 <div> { "loading..." } </div>
             },
             Some(state) => {
-                let onchange = self.dispatch.reduce_callback_with(move |state: &mut GlobalState, v: f64| {
-                    state.threshold_value = v as u8;
-                });
+                let onchange =
+                    self.dispatch
+                        .reduce_callback_with(move |state: &mut GlobalState, v: f64| {
+                            state.threshold_value = v as u8;
+                        });
 
-                let height_onchange = self.dispatch.reduce_callback_with(|state: &mut GlobalState, v: f64| state.stl_height = v);
-                let onclick = self.dispatch.reduce_callback_with(|state: &mut GlobalState, _v| state.display_stl = !state.display_stl);
+                let height_onchange = self
+                    .dispatch
+                    .reduce_callback_with(|state: &mut GlobalState, v: f64| state.stl_height = v);
+                let onclick = self
+                    .dispatch
+                    .reduce_callback_with(|state: &mut GlobalState, _v| {
+                        state.display_stl = !state.display_stl
+                    });
                 html! {
                     <div>
                         <canvas ref={ self.canvas_ref.clone() } />
@@ -176,5 +181,4 @@ impl Component for ThresholdImage {
             self.canvas_loaded = true;
         }
     }
-
 }

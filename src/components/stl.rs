@@ -7,11 +7,7 @@ use yew::{function_component, html, use_effect, Properties};
 use yewdux::prelude::*;
 use yewdux_functional::use_store;
 
-
-use super::{
-    external::STLViewer,
-    image::img_from_bytes, store::GlobalState,
-};
+use super::{external::STLViewer, image::img_from_bytes, store::GlobalState};
 
 #[derive(Properties, PartialEq)]
 pub struct StlViewerProps {
@@ -20,7 +16,6 @@ pub struct StlViewerProps {
 
 #[function_component(StlViewer)]
 pub fn stl_viewer(props: &StlViewerProps) -> Html {
-
     let store = use_store::<BasicStore<GlobalState>>();
 
     let state = if let Some(s) = store.state() {
@@ -46,7 +41,10 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
 
     let inner = writer.into_inner().unwrap();
 
-    let file_name = format!("{}.stl", state.file_name.clone().unwrap_or("no-name".to_string()));
+    let file_name = format!(
+        "{}.stl",
+        state.file_name.clone().unwrap_or("no-name".to_string())
+    );
     let g_file = gloo_file::File::new(&file_name, inner.as_slice());
     use_effect(move || {
         STLViewer(g_file.as_ref(), "stl-cont");

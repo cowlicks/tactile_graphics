@@ -45,9 +45,11 @@ fn image_to_stl(bencher: divan::Bencher, path: &str) {
     const HEIGHT: f64 = 5.0;
     const SCALE_FACTOR: f64 = 3.0;
     let img = open(path);
-    bencher.with_inputs(|| img.clone()).bench_local_values(|img| {
-        bit_to_stl::triangle::image_to_stl(img, DEFAULT_THRESHOLD_VALUE, HEIGHT, SCALE_FACTOR)
-            .unwrap()
-            .collect::<Vec<f64>>()
-    });
+    bencher
+        .with_inputs(|| img.clone())
+        .bench_local_values(|img| {
+            bit_to_stl::triangle::image_to_stl(img, DEFAULT_THRESHOLD_VALUE, HEIGHT, SCALE_FACTOR)
+                .unwrap()
+                .collect::<Vec<f64>>()
+        });
 }

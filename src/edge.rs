@@ -206,9 +206,7 @@ impl IntoIterator for Edge {
 }
 
 pub fn edge_to_geojson(edge: &Edge) -> Vec<Vec<f64>> {
-    edge.iter()
-        .map(|vert| vec![vert.x, vert.y])
-        .collect()
+    edge.iter().map(|vert| vec![vert.x, vert.y]).collect()
 }
 
 fn edge_to_segments<'a>(edge: &'a Edge) -> Box<dyn Iterator<Item = [&Vert; 2]> + 'a> {

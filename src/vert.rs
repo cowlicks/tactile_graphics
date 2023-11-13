@@ -219,7 +219,7 @@ mod tests {
         assert_eq!(v.y, 3.);
         Ok(())
     }
-    
+
     #[test]
     fn angle_between_counter_cw() {
         let a = Vert::new(1., 0.);

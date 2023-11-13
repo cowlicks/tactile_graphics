@@ -48,7 +48,6 @@ fn flatten_nodes(mut t: Tree) -> Vec<Node> {
     out.append(&mut t.children);
 
     while let Some(h) = holes.pop() {
-        
         for child in h.children.iter() {
             for cc in child.children.iter() {
                 holes.push(cc.clone());
@@ -76,8 +75,8 @@ pub struct Node {
     pub children: Vec<Node>,
 }
 
- /// maybe make this generic and have it take a "family" trait'd object
- /// with has a "get_relationship(
+/// maybe make this generic and have it take a "family" trait'd object
+/// with has a "get_relationship(
 impl Node {
     fn new(data: Edge) -> Node {
         Node {
@@ -131,10 +130,10 @@ pub fn sort_edges(edges: Vec<Edge>) -> Vec<Node> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
+    use crate::edge_file;
     use crate::util::testing::{closed_edge, donut};
     use std::error::Error;
-    use crate::edge_file;
-    use crate::components::constants::DEFAULT_THRESHOLD_VALUE;
 
     static SIDE: f32 = 100.;
     static X0: f32 = 0.;
@@ -154,7 +153,11 @@ mod tests {
         let outer = Node::new(closed_edge(SIDE, X0, Y0, false));
         let inner = Node::new(closed_edge(SIDE / 2., X0 + SIDE / 4., Y0 + SIDE / 4., true));
         assert_eq!(inner.is_child_of(&outer), true, "inner is child of outer");
-        assert_eq!(outer._is_parent_of(&inner), true, "outer is parent of inner");
+        assert_eq!(
+            outer._is_parent_of(&inner),
+            true,
+            "outer is parent of inner"
+        );
 
         let mut nodes = vec![];
         insert(&mut nodes, inner);

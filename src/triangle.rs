@@ -2,13 +2,13 @@ use log::info;
 use std::error::Error;
 
 use crate::{
+    components::constants::DEFAULT_THRESHOLD_VALUE,
     earcut::{earcut, flatten},
     edge_img,
     ribbon::edge_to_ribbon,
     stl::write_stl_3d,
     threshold_img,
     tree::sort_edges,
-    components::constants::DEFAULT_THRESHOLD_VALUE,
 };
 
 use image::{io::Reader as ImageReader, DynamicImage};
@@ -36,7 +36,10 @@ fn flip_triangles(tris: &[f64], new_z: f64) -> Vec<f64> {
     let n_verts_in_polygon = dims * n_corners;
 
     assert!(tris.len() % (n_verts_in_polygon) == 0);
-    info!("flipping triangles n = {:?}", tris.len() / n_verts_in_polygon);
+    info!(
+        "flipping triangles n = {:?}",
+        tris.len() / n_verts_in_polygon
+    );
 
     let n_tris = tris.len() / n_verts_in_polygon;
     (0..n_tris)
@@ -118,9 +121,7 @@ pub fn image_to_stl(
 
     let triangle_indexes: Vec<Vec<usize>> = earcut_args_arr
         .iter()
-        .map(|(verts, holes, _dims)| {
-            earcut(verts, holes, 2)
-        })
+        .map(|(verts, holes, _dims)| earcut(verts, holes, 2))
         .collect();
 
     info!("earcut into triangles for stl");
