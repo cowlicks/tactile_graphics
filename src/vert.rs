@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::convert::{From, Into};
-use std::usize;
 
 use crate::edge::Edge;
 

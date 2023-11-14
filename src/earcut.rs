@@ -128,10 +128,10 @@ macro_rules! prevz {
 }
 
 impl<T: Float + Display> LinkedLists<T> {
-    fn iter(&self, r: std::ops::Range<NodeIdx>) -> NodeIterator<T> {
+    fn iter(&self, r: std::ops::Range<NodeIdx>) -> NodeIterator<'_, T> {
         return NodeIterator::new(self, r.start, r.end);
     }
-    fn iter_pairs(&self, r: std::ops::Range<NodeIdx>) -> NodePairIterator<T> {
+    fn iter_pairs(&self, r: std::ops::Range<NodeIdx>) -> NodePairIterator<'_, T> {
         return NodePairIterator::new(self, r.start, r.end);
     }
     fn insert_node(&mut self, i: VertIdx, x: T, y: T, last: NodeIdx) -> NodeIdx {
@@ -195,7 +195,7 @@ struct NodeIterator<'a, T: Float + Display> {
 }
 
 impl<'a, T: Float + Display> NodeIterator<'a, T> {
-    fn new(ll: &LinkedLists<T>, start: NodeIdx, end: NodeIdx) -> NodeIterator<T> {
+    fn new(ll: &LinkedLists<T>, start: NodeIdx, end: NodeIdx) -> NodeIterator<'_, T> {
         NodeIterator {
             pending_result: Some(noderef!(ll, start)),
             cur: start,
@@ -228,7 +228,7 @@ struct NodePairIterator<'a, T: Float + Display> {
 }
 
 impl<'a, T: Float + Display> NodePairIterator<'a, T> {
-    fn new(ll: &LinkedLists<T>, start: NodeIdx, end: NodeIdx) -> NodePairIterator<T> {
+    fn new(ll: &LinkedLists<T>, start: NodeIdx, end: NodeIdx) -> NodePairIterator<'_, T> {
         NodePairIterator {
             pending_result: Some((noderef!(ll, start), nextref!(ll, start))),
             cur: start,

@@ -31,7 +31,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
     let other_front = other.front();
     let other_back = other.back();
 
-    return match (target_front, target_back) {
+    match (target_front, target_back) {
         _ if (target_back == other_front && target_front == other_back) => {
             other.pop_front();
             let l = target.len();
@@ -99,7 +99,7 @@ fn connect(target: &mut Edge, mut other: Edge) {
                     ",
             target_front, target_back, other_front, other_back
         ),
-    };
+    }
 }
 
 impl Default for Edges {

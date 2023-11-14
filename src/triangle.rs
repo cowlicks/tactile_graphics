@@ -13,9 +13,9 @@ use crate::{
 
 use image::{io::Reader as ImageReader, DynamicImage};
 
-fn to_3d(tris: &Vec<f64>, z: f64) -> Vec<f64> {
+fn to_3d(tris: &[f64], z: f64) -> Vec<f64> {
     let d2 = 2;
-    assert!(tris.len() % d2 == 0);
+    assert!(tris.len().is_multiple_of(d2));
     let n_verts = tris.len() / d2;
     (0..n_verts)
         .flat_map(|c_i| {
@@ -35,7 +35,7 @@ fn flip_triangles(tris: &[f64], new_z: f64) -> Vec<f64> {
     let n_corners = 3;
     let n_verts_in_polygon = dims * n_corners;
 
-    assert!(tris.len() % (n_verts_in_polygon) == 0);
+    assert!(tris.len().is_multiple_of(n_verts_in_polygon));
     info!(
         "flipping triangles n = {:?}",
         tris.len() / n_verts_in_polygon
@@ -152,8 +152,8 @@ pub fn image_to_stl(
 
     let all_tris = ribbon_tris
         .into_iter()
-        .chain(tri_3d.into_iter())
-        .chain(bottom_triangles.into_iter())
+        .chain(tri_3d)
+        .chain(bottom_triangles)
         .collect();
     info!("combined all triangles");
 

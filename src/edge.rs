@@ -209,7 +209,7 @@ pub fn edge_to_geojson(edge: &Edge) -> Vec<Vec<f64>> {
     edge.iter().map(|vert| vec![vert.x, vert.y]).collect()
 }
 
-fn edge_to_segments<'a>(edge: &'a Edge) -> Box<dyn Iterator<Item = [&Vert; 2]> + 'a> {
+fn edge_to_segments<'a>(edge: &'a Edge) -> Box<dyn Iterator<Item = [&'a Vert; 2]> + 'a> {
     let before_iter = edge.iter();
     let after_iter = edge.iter();
     Box::new(
@@ -405,7 +405,7 @@ mod tests {
 
     #[test]
     fn test_segent() {
-        let a = vec![1, 2, 3];
+        let a = [1, 2, 3];
         let befor_iter = a.iter();
         let after_iter = a.iter();
         let segments: Vec<[&i32; 2]> = befor_iter
@@ -424,11 +424,11 @@ mod tests {
             Vert::new(0., 1.),
             Vert::new(0., 0.),
         ]);
-        assert_eq!(edge_contains(&e, &Vert::new(0.5, 0.5)), true);
+        assert!(edge_contains(&e, &Vert::new(0.5, 0.5)));
 
-        assert_eq!(edge_contains(&e, &Vert::new(0.5, 10.)), false);
+        assert!(!edge_contains(&e, &Vert::new(0.5, 10.)));
 
-        assert_eq!(edge_contains(&e, &Vert::new(10., 0.5)), false);
+        assert!(!edge_contains(&e, &Vert::new(10., 0.5)));
     }
 
     #[test]
@@ -440,10 +440,10 @@ mod tests {
             Vert::new(1., 0.),
             Vert::new(0., 0.),
         ]);
-        assert_eq!(hole_contains(&e, &Vert::new(0.5, 0.5)), true);
+        assert!(hole_contains(&e, &Vert::new(0.5, 0.5)));
 
-        assert_eq!(hole_contains(&e, &Vert::new(0.5, 10.)), false);
+        assert!(!hole_contains(&e, &Vert::new(0.5, 10.)));
 
-        assert_eq!(hole_contains(&e, &Vert::new(10., 0.5)), false);
+        assert!(!hole_contains(&e, &Vert::new(10., 0.5)));
     }
 }

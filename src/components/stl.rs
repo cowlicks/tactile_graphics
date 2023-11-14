@@ -54,8 +54,8 @@ pub fn stl_viewer(props: &StlViewerProps) -> Html {
     html! {
         <p>
             <b>{ "STL view" }</b>
-            <p> { format!("threshold value: {}", &state.threshold_value) } </p>
-            <p> { format!("num bytes: {}", &props.bytes.len()) } </p>
+            <p> { format!("threshold value: {}", state.threshold_value) } </p>
+            <p> { format!("num bytes: {}", props.bytes.len()) } </p>
             <p> { format!("buffer size: {}", inner.len()) } </p>
             <a id={ "download-button" }
                 target={ "_blank" }

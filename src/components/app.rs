@@ -128,7 +128,7 @@ impl Component for App {
                              <ThresholdImage
                                     bytes={ Rc::clone(data) }
                                     />
-                            if self.state.clone().map_or(false, |x| x.display_stl) {
+                            if self.state.clone().is_some_and(|x| x.display_stl) {
                                 <StlViewer
                                     bytes={ Rc::clone(data) }
                                 />

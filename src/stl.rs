@@ -84,7 +84,7 @@ where
 pub fn write_stl_2d(filename: &str, tris: Vec<f64>) -> Result<(), Box<dyn Error>> {
     let f = File::create(filename)?;
     let mut writer = BufWriter::new(f);
-    assert!(tris.len() % 6 == 0);
+    assert!(tris.len().is_multiple_of(6));
     let count: u32 = (tris.len() as u32) / 6;
 
     writer.write_all(&HEADER)?;
@@ -101,7 +101,7 @@ pub fn triangles_to_stl_writer<T: Write>(
     tris: Vec<f64>,
 ) -> Result<(), Box<dyn Error>> {
     let n3d = 9;
-    assert!(tris.len() % n3d == 0);
+    assert!(tris.len().is_multiple_of(n3d));
     let count: u32 = (tris.len() / n3d) as u32;
 
     writer.write_all(&HEADER)?;
@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn test_chunks() {
-        let data = vec![1, 1, 2, -2, 6, 0, 3, 1];
+        let data = [1, 1, 2, -2, 6, 0, 3, 1];
 
         let _r: Vec<Vec<&i32>> = data
             .chunks(3)

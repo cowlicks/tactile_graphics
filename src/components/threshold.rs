@@ -127,6 +127,8 @@ impl Component for ThresholdImage {
         }
     }
 
+    // yew 0.19's `html!` expands `<Slider label="..." />` in a way that trips this lint.
+    #[allow(clippy::unnecessary_operation)]
     fn view(&self, _ctx: &Context<Self>) -> Html {
         match &self.state {
             None => html! {

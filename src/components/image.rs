@@ -20,7 +20,7 @@ pub fn data_url_from_img_bytes(bytes: &Vec<u8>) -> Result<String, ImageError> {
     Ok(format!("data:{};base64,{}", mediatype, b64))
 }
 
-pub fn img_from_bytes(bytes: &Vec<u8>) -> Result<DynamicImage, ImageError> {
+pub fn img_from_bytes(bytes: &[u8]) -> Result<DynamicImage, ImageError> {
     let format = guess_format(bytes)?;
     info!("image format is {:?}", format);
     load_from_memory_with_format(bytes, format)
