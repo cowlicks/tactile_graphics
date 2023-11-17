@@ -1,3 +1,5 @@
+//! This is a hand vendored version of this code: https://github.com/donbright/earcutr/tree/master/src
+//! which is port of mapbox's JS earcutting code: https://github.com/mapbox/earcut
 #![allow(dead_code)]
 #![allow(clippy::all)]
 
